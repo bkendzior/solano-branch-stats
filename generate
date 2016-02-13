@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+mkdir -p out/
+rm -rf out/*
+
+textql -header -output-header -sql "
+SELECT
+  main.week_of as week_of,
+  main.summary_status as status,
+  COUNT(*) as count,
+  totals.week_total as total,
+  printf(\"%.2f\", COUNT(*)*1.0/totals.week_total * 100) as percentage
+FROM (
+  SELECT
+    date(substr(created_at, 1, 19), 'weekday 0', '-7 days') as week_of,
+    summary_status
+  FROM session
+  WHERE
+    summary_status='passed' OR
+    summary_status='failed'
+) as main
+
+LEFT JOIN (
+  SELECT
+    week_of,
+    SUM(count_per_status) as week_total
+  FROM (
+    SELECT
+      week_of,
+      COUNT(*) as count_per_status
+    FROM (
+      SELECT
+        date(substr(created_at, 1, 19), 'weekday 0', '-7 days') as week_of,
+        summary_status
+      FROM session
+      WHERE
+        summary_status='passed' OR
+        summary_status='failed'
+    )
+    GROUP BY week_of
+  )
+  GROUP BY week_of
+) as totals ON totals.week_of = main.week_of
+
+WHERE
+  main.summary_status = 'passed'
+
+GROUP BY main.week_of, main.summary_status
+ORDER BY main.week_of ASC
+;" $1 > out/result.txt
+
+gnuplot plot.plg
