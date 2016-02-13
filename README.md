@@ -5,4 +5,5 @@ Analyze Solano's branch build history
 
 ```bash
 brew install textql gnuplot
+./solano-branch-stats <csv file>
 ```
