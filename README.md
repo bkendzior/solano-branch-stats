@@ -19,4 +19,6 @@ cd solano-branch-stats
 ./solano-branch-stats <csv file>
 ```
 
-**Examine `out/result.csv` & `out/result.png`**
+**Examine:** 
+- `out/result.csv`
+- `out/result.png`
