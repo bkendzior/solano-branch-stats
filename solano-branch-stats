@@ -47,6 +47,6 @@ WHERE
 
 GROUP BY main.week_of, main.summary_status
 ORDER BY main.week_of ASC
-;" $1 > out/result.txt
+;" $1 > out/result.csv
 
 gnuplot plot.plt

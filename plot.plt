@@ -11,6 +11,6 @@ set ytics 0,10,100
 set yrange [0:100]
 set key off
 set datafile separator ','
-plot 'out/result.txt' \
+plot 'out/result.csv' \
   every ::1 using 5:xticlabels(1) with histogram, '' \
   every ::1 using 0:5:(sprintf("%d%%, (%d / %d)", $5, $3, $4)) with labels rotate by 75 offset 2.5,2.75 notitle
