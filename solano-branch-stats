@@ -7,8 +7,8 @@ textql -header -output-header -sql "
 SELECT
   main.week_of as week_of,
   main.summary_status as status,
-  COUNT(*) as count,
-  totals.week_total as total,
+  COUNT(*) as num_passing,
+  totals.week_total as total_num_builds,
   printf(\"%.2f\", COUNT(*)*1.0/totals.week_total * 100) as percentage
 FROM (
   SELECT
