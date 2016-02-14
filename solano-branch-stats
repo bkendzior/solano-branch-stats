@@ -49,4 +49,4 @@ GROUP BY main.week_of, main.summary_status
 ORDER BY main.week_of ASC
 ;" $1 > out/result.txt
 
-gnuplot plot.plg
+gnuplot plot.plt
