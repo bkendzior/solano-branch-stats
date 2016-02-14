@@ -4,13 +4,8 @@ mkdir -p out/
 rm -rf out/*
 
 textql -header -output-header -sql "
-SELECT
-  main.week_of as week_of,
-  main.summary_status as status,
-  COUNT(*) as num_passing,
-  totals.week_total as total_num_builds,
-  printf(\"%.2f\", COUNT(*)*1.0/totals.week_total * 100) as percentage
-FROM (
+
+WITH builds AS (
   SELECT
     date(substr(created_at, 1, 19), 'weekday 0', '-7 days') as week_of,
     summary_status
@@ -18,35 +13,29 @@ FROM (
   WHERE
     summary_status='passed' OR
     summary_status='failed'
-) as main
+),
 
-LEFT JOIN (
+builds_per_week AS (
   SELECT
     week_of,
-    SUM(count_per_status) as week_total
-  FROM (
-    SELECT
-      week_of,
-      COUNT(*) as count_per_status
-    FROM (
-      SELECT
-        date(substr(created_at, 1, 19), 'weekday 0', '-7 days') as week_of,
-        summary_status
-      FROM session
-      WHERE
-        summary_status='passed' OR
-        summary_status='failed'
-    )
-    GROUP BY week_of
-  )
+    COUNT(*) as total_num_builds
+  FROM builds
   GROUP BY week_of
-) as totals ON totals.week_of = main.week_of
+)
 
+SELECT
+  builds.week_of as week_of,
+  builds.summary_status as status,
+  COUNT(*) as num_passing,
+  builds_per_week.total_num_builds as total_num_builds,
+  printf(\"%.2f\", COUNT(*)*1.0/builds_per_week.total_num_builds * 100) as percentage
+FROM builds
+LEFT JOIN builds_per_week ON builds_per_week.week_of = builds.week_of
 WHERE
-  main.summary_status = 'passed'
+  builds.summary_status = 'passed'
 
-GROUP BY main.week_of, main.summary_status
-ORDER BY main.week_of ASC
+GROUP BY builds.week_of, builds.summary_status
+ORDER BY builds.week_of ASC
 ;" $1 > out/result.csv
 
 gnuplot plot.plt
