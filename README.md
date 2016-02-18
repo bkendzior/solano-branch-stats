@@ -1,6 +1,8 @@
 # solano-branch-stats
 Analyze Solano's branch build history
 
+[![](https://ci.solanolabs.com:443/vts-opensource/solano-branch-stats/badges/branches/master)](https://ci.solanolabs.com:443/vts-opensource/solano-branch-stats/suites/391778)
+
 ### Install
 
 ```bash
