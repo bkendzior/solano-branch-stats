@@ -3,13 +3,15 @@
 mkdir -p out/
 rm -rf out/*
 
+fname=`basename $1 | awk -F"." '{print $1}'`
+
 textql -header -output-header -sql "
 
 WITH builds AS (
   SELECT
     date(substr(created_at, 1, 19), 'weekday 0', '-7 days') as week_of,
     summary_status
-  FROM session
+  FROM ${fname}
   WHERE
     summary_status='passed' OR
     summary_status='failed'
