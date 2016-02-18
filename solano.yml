@@ -1,0 +1,16 @@
+tests:
+  - "tests/test_solano-branch-state.sh"
+
+hooks:
+  post_setup: "./config/pre_setup.sh"
+
+golang_version: 1.5.3
+
+system:
+  docker: true
+  queue: docker
+
+collect:
+  repo:
+    - out/output.png
+    - out/result.csv
